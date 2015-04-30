@@ -1,6 +1,0 @@
----
-  hostname: host1.domain.com
-  tags: [domain, lb]
----
-  hostname: host2.domain.com
-  tags: [domain, webserver]

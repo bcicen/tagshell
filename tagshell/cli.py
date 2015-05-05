@@ -1,10 +1,7 @@
-#!/usr/bin/env python # coding: utf-8
-import sys,os
+import sys,os,yaml
 from argparse import ArgumentParser
-#from . import __version__
+from . import __version__
 from core import TagShell, TagManager
-
-__version__ = "0.1.0"
 
 def main():
     pwd = os.getcwd()
@@ -17,16 +14,26 @@ def main():
             help='tag to match. can be specified multiple times')
     parser.add_argument('-nt', dest='not_tags', type=str, action='append', default=[],  
             help='tag to NOT match. can be specified multiple times ')
-    parser.add_argument('-f', dest='tagsfile', help='path to tags file store in yaml format',
-            default=pwd + '/tags.yaml')
+    parser.add_argument('-c', dest='config_file', help='tagshell config file',
+            default=os.path.expanduser('~/.tagshell'))
     parser.add_argument('command', help='command to execute')
 
     args = parser.parse_args()
-    if not args.tags:
-        print('you must specify the -t option')
+
+    if os.path.isfile(args.config_file) and os.access(args.config_file, os.R_OK):
+        with open(args.config_file,'r') as f:
+            config = yaml.load(f)
+    else:
+        print('unable to open config file %s' % args.config_file)
         sys.exit(1)
 
-    t = TagManager(args.tagsfile)
+    if not args.tags and not args.not_tags:
+        print('you must specify at least one -nt or -t option')
+        sys.exit(1)
+
+    tagfile = config['tag_file'] 
+
+    t = TagManager(tagfile)
 
     nodes = [ node for node in t.get(tags=args.tags,exclude_tags=args.not_tags) ] 
 

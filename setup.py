@@ -1,9 +1,30 @@
 import os
 import shutil
+from pwd import getpwnam
 from setuptools import setup, find_packages
 from tagshell import __version__
 
 requires = [ 'pyyaml', 'pssh' ]
+
+if os.environ.has_key('SUDO_USER'):
+    user = os.environ['SUDO_USER']
+else:
+    user = os.environ['USER']
+
+home = getpwnam(user).pw_dir
+
+config_dir = home + '/.tagshell'
+config_file = home + '/.tagshell/config.yaml'
+tag_file = home + '/.tagshell/tags.yaml'
+
+if not os.path.isdir(config_dir):
+    os.mkdir(config_dir)
+
+if not os.path.isfile(config_file):
+    shutil.copyfile('config_example.yaml', config_file)
+
+if not os.path.isfile(tag_file):
+    shutil.copyfile('tags_example.yaml', tag_file)
 
 setup(name='tagshell',
         version=__version__,

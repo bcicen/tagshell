@@ -15,7 +15,7 @@ def main():
     parser.add_argument('-nt', dest='not_tags', type=str, action='append', default=[],  
             help='tag to NOT match. can be specified multiple times ')
     parser.add_argument('-c', dest='config_file', help='tagshell config file',
-            default=os.path.expanduser('~/.tagshell'))
+            default=os.path.expanduser('~/.tagshell/config.yaml'))
     parser.add_argument('command', help='command to execute')
 
     args = parser.parse_args()
@@ -31,7 +31,7 @@ def main():
         print('you must specify at least one -nt or -t option')
         sys.exit(1)
 
-    tagfile = config['tag_file'] 
+    tagfile = os.path.expanduser(config['tag_file'])
 
     t = TagManager(tagfile)
 

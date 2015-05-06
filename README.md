@@ -15,7 +15,7 @@ If this is your first time installing tagshell, a default configuration and tag 
 ```bash
 tagshell -t webservers -nt region1 "w"
 ```
-Where *-t* designates the host tags to match and *-nt* designates tags to explictly not match. The above would execute the "w" command on all webservers and lb not in region1. *-t* and *-nt* options can both be specified multiple times for more granular matches. 
+Where **-t** designates the host tags to match and **-nt** designates tags to explictly not match. The above would execute the "w" command on all webservers and lb not in region1. **-t** and **-nt** options can both be specified multiple times for more granular matches. 
 
 ## Tag file 
 Tagshell depends on a yaml file describing hosts and tags like:

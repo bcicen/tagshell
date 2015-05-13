@@ -47,22 +47,22 @@ class TagShell(object):
     config - dict of config values to override default
     """
     def __init__(self,cmd,nodes,config,confirm=True):
-        self.opts = TagShellOpts(config)
+        self.opts = TagShellConfig(config)
         self.opts.cmdline = cmd
+
         log.info('executing %s against %s' % (cmd,nodes))
         self.color = TermColors()
 
         print('executing "%s" against:' % cmd)
-        for node in nodes:
-           self.color.red(node)
+        [ self.color.red(node) for node in nodes ]
+
         if confirm:
            self._confirmation() 
 
         opts = self.opts
-        if opts.outdir and not os.path.exists(opts.outdir):
-            os.makedirs(opts.outdir)
-        if opts.errdir and not os.path.exists(opts.errdir):
-            os.makedirs(opts.errdir)
+        
+        logdirs = [ opts.outdir,opts.errdir ]
+        [ os.makedirs(d) for d in logdirs if not os.path.exists(d) ] 
 
         self.manager = Manager(opts)
         for node in nodes:
@@ -109,7 +109,7 @@ class TagShell(object):
             print('execution aborted')
             sys.exit(1)
 
-class TagShellOpts(TagShell):
+class TagShellConfig(TagShell):
     defaults = {
         'send_input': None,
         'par': 200,

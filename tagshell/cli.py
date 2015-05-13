@@ -42,9 +42,9 @@ def main():
         sys.exit(1)
 
     if args.b:
-       TagShell(args.command,nodes,confirm=False)
+       TagShell(args.command,nodes,config,confirm=False)
     else:
-       TagShell(args.command,nodes)
+       TagShell(args.command,nodes,config)
 
 if __name__ == '__main__':
     main()

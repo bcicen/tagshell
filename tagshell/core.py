@@ -1,11 +1,10 @@
-import os,sys,yaml
-import logging.config
+import os,sys,yaml,logging
 import ConfigParser
 from psshlib import psshutil
 from psshlib.manager import Manager, FatalError
 from psshlib.task import Task
 
-log = logging.getLogger('shmx')
+log = logging.getLogger('tagshell')
 
 class TagManager(object):
     def __init__(self,tagsfile):
@@ -44,31 +43,11 @@ class TagShell(object):
     TagShell class is a wrapper around the psshlib package.
     params:
     cmd - string of command to run
-    nodelist - list of nodes to execute against
+    nodes - list of hosts to execute against
+    config - dict of config values to override default
     """
-    config  = {
-        'send_input': None,
-        'par': 200,
-        'verbose': False,
-        'inline_stdout': False,
-        'extra': None,
-        'askpass': None,
-        'errdir': '/var/log/tagshell/stderr/',
-        'outdir': '/var/log/tagshell/stdout/',
-        'print_out': True,
-        'options': [ 'BatchMode=yes' ],
-        'host_files': None,
-        'user': None,
-        'timeout': 300,
-        'inline': None,
-        'host_strings': None,
-        'stdin': None,
-        'port': None,
-    }
-    def __init__(self,cmd,nodes,confirm=True):
-        #setup logger,options
-        log = logging.getLogger('shmx')
-        self.opts = TagShellOpts(self.config)
+    def __init__(self,cmd,nodes,config,confirm=True):
+        self.opts = TagShellOpts(config)
         self.opts.cmdline = cmd
         log.info('executing %s against %s' % (cmd,nodes))
         self.color = TermColors()
@@ -121,11 +100,8 @@ class TagShell(object):
         if opts.cmdline:
             cmd.append(opts.cmdline)
         log.debug('full command compiled as: %s' % ' '.join(cmd))
-        try:
-            task = Task(node, opts.port, opts.user, cmd, opts, opts.stdin)
-        except Exception,e:
-            raise Exception(e)
-        return task
+
+        return Task(node,opts.port,opts.user,cmd,opts,opts.stdin)
 
     def _confirmation(self):
         s = raw_input('confirm?(yes/no):')
@@ -134,10 +110,32 @@ class TagShell(object):
             sys.exit(1)
 
 class TagShellOpts(TagShell):
+    defaults = {
+        'send_input': None,
+        'par': 200,
+        'verbose': False,
+        'inline_stdout': False,
+        'extra': None,
+        'askpass': None,
+        'errdir': '/var/log/tagshell/stderr/',
+        'outdir': '/var/log/tagshell/stdout/',
+        'print_out': True,
+        'options': [ 'BatchMode=yes' ],
+        'host_files': None,
+        'user': None,
+        'timeout': 300,
+        'inline': None,
+        'host_strings': None,
+        'stdin': None,
+        'port': None,
+    }
     def __init__(self,config):
-        for k in config:
-            self.__setattr__(k,config[k])
-            log.debug('option %s set as %s' % (k,config[k]))
+        #override defaults with any provided config
+        self.defaults.update(config)
+        for k in self.defaults:
+            self.__setattr__(k,self.defaults[k])
+
+        log.debug('loaded config as:\n%s' % yaml.dump(self.defaults))
 
 class TermColors:
     _red = '\033[91m'

@@ -1,1 +1,3 @@
 tag_file: ~/.tagshell/tags.yaml
+errdir: ~/.tagshell/logs/
+outdir: ~/.tagshell/logs/

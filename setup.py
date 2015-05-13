@@ -15,13 +15,15 @@ home = getpwnam(user).pw_dir
 uid  = getpwnam(user).pw_uid
 gid  = getpwnam(user).pw_gid
 
-config_dir = home + '/.tagshell'
-config_file = home + '/.tagshell/config.yaml'
-tag_file = home + '/.tagshell/tags.yaml'
+config_dir  = home + '/.tagshell'
+log_dir     = config_dir + '/logs'
+config_file = config_dir + '/config.yaml'
+tag_file    = config_dir + '/tags.yaml'
 
-if not os.path.isdir(config_dir):
-    os.mkdir(config_dir)
-    os.chown(config_dir,uid,gid)
+for dir in config_dir,log_dir:
+    if not os.path.isdir(dir):
+        os.mkdir(dir)
+        os.chown(dir,uid,gid)
 
 if not os.path.isfile(config_file):
     shutil.copyfile('config_example.yaml', config_file)

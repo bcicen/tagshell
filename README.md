@@ -35,8 +35,8 @@ Default location of ~/.tagshell/config.yaml
 Currently supports the following configuration options:
 ```
 tag_file: path to host tags file
-errdir: directory to log stderr
-outdir: directory to log stdout.
+errdir: directory to log stderr (default: ~/.tagshell/logs/)
+outdir: directory to log stdout (default: ~/.tagshell/logs/)
 ```
 
 ## Options

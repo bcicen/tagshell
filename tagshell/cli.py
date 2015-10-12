@@ -64,12 +64,12 @@ class TagShellCli(object):
     def list_all(self):
         all_tags = self.tagman.all_tags()
         print('All Tags (%d):' % len(all_tags))
-        for tag in all_tags:
+        for tag in sorted(all_tags):
             print('  %s' % tag)
 
         all_hosts = self.tagman.all_hosts()
         print('All Hosts (%d):' % len(all_hosts))
-        for host in all_hosts:
+        for host in sorted(all_hosts):
             print('  %s' % host)
 
     @staticmethod

@@ -7,10 +7,10 @@ exec(open('tagshell/version.py').read())
 
 requires = [ 'pyyaml', 'pssh' ]
 
-if os.environ.has_key('SUDO_USER'):
-    user = os.environ['SUDO_USER']
+if os.getenv('SUDO_USER'):
+    user = os.getenv('SUDO_USER')
 else:
-    user = os.environ['USER']
+    user = os.getenv('USER')
 
 home = getpwnam(user).pw_dir
 uid  = getpwnam(user).pw_uid

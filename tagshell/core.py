@@ -1,4 +1,7 @@
-import os,sys,yaml,logging
+import os
+import sys
+import yaml
+import logging
 import ConfigParser
 from psshlib import psshutil
 from psshlib.manager import Manager, FatalError
@@ -7,7 +10,7 @@ from psshlib.task import Task
 log = logging.getLogger('tagshell')
 
 class TagManager(object):
-    def __init__(self,tagsfile):
+    def __init__(self, tagsfile):
         tagsfile = os.path.expanduser(tagsfile)
         if not os.path.isfile(tagsfile):
             raise Exception('unable to open tags file %s', (tagsfile))
@@ -46,7 +49,7 @@ class TagShell(object):
     nodes - list of hosts to execute against
     config - dict of config values to override default
     """
-    def __init__(self,cmd,nodes,config,confirm=True):
+    def __init__(self, cmd, nodes, config, confirm=True):
         self.opts = TagShellConfig(config)
         self.opts.cmdline = cmd
 
@@ -57,7 +60,7 @@ class TagShell(object):
         [ self.color.red(node) for node in nodes ]
 
         if confirm:
-           self._confirmation() 
+           self._confirm()
 
         opts = self.opts
         
@@ -103,7 +106,7 @@ class TagShell(object):
 
         return Task(node,opts.port,opts.user,cmd,opts,opts.stdin)
 
-    def _confirmation(self):
+    def _confirm(self):
         s = raw_input('confirm?(yes/no):')
         if s != 'yes':
             print('execution aborted')
@@ -129,7 +132,7 @@ class TagShellConfig(TagShell):
         'stdin': None,
         'port': None,
     }
-    def __init__(self,config):
+    def __init__(self, config):
         #override defaults with any provided config
         self.defaults.update(config)
         for k in self.defaults:

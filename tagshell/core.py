@@ -65,8 +65,10 @@ class TagShell(object):
 
         opts = self.opts
         
-        logdirs = [ opts.outdir,opts.errdir ]
-        [ os.makedirs(d) for d in logdirs if not os.path.exists(d) ] 
+        for d in [ opts.outdir, opts.errdir ]:
+            if not os.path.exists(d):
+                os.makedirs(d)
+                log.debug('created dir %s' % d)
 
         self.manager = Manager(opts)
         for node in nodes:
@@ -121,8 +123,8 @@ class TagShellConfig(TagShell):
         'inline_stdout': False,
         'extra': None,
         'askpass': None,
-        'errdir': os.path.expanduser('~/.tagshell/logs/'),
-        'outdir': os.path.expanduser('~/.tagshell/logs/'),
+        'errdir': '~/.tagshell/logs/',
+        'outdir': '~/.tagshell/logs/',
         'print_out': True,
         'options': [ 'BatchMode=yes' ],
         'host_files': None,
@@ -136,10 +138,14 @@ class TagShellConfig(TagShell):
     def __init__(self, config):
         #override defaults with any provided config
         self.defaults.update(config)
+
         for k in self.defaults:
             self.__setattr__(k,self.defaults[k])
+        
+        self.errdir = os.path.expanduser(self.errdir)
+        self.outdir = os.path.expanduser(self.outdir)
 
-        log.debug('loaded config as:\n%s' % yaml.dump(self.defaults))
+        log.debug('loaded config as:\n%s' % yaml.dump(self.__dict__))
 
 class TermColors:
     _red = '\033[91m'

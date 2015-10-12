@@ -5,37 +5,70 @@ from core import TagShell, TagManager
 
 def main():
     pwd = os.getcwd()
+    description = 'parallel remote shell execution and inventory utility'
 
-    parser = ArgumentParser(description='execute, in parallel, a given command against \
-            nodes matching given tags from pre-built yaml file',version=__version__)
-    parser.add_argument('-b', action='store_true', help='batch mode. supress asking for \
-            confirmation and immediately execute')
-    parser.add_argument('-t', dest='tags', type=str, action='append', default=[], 
-            help='tag to match. can be specified multiple times')
-    parser.add_argument('-nt', dest='not_tags', type=str, action='append', default=[],  
-            help='tag to NOT match. can be specified multiple times ')
-    parser.add_argument('-c', dest='config_file', help='tagshell config file',
+    parser = ArgumentParser(version=__version__, description=description)
+
+    parser.add_argument('-c',
+            dest='config_file',
+            help='path to tagshell config file',
             default=os.path.expanduser('~/.tagshell/config.yaml'))
-    parser.add_argument('command', help='command to execute')
+
+    parser.add_argument('-b',
+            action='store_true',
+            help='batch mode. supress confirmation and immediately execute')
+
+    parser.add_argument('-t',
+            dest='tags',
+            type=str,
+            default=[],
+            action='append',
+            help='tag to match. can be specified multiple times')
+
+    parser.add_argument('-nt',
+            dest='not_tags',
+            type=str,
+            action='append',
+            default=[],
+            help='tag to NOT match. can be specified multiple times')
+
+    parser.add_argument('-l',
+            action='store_true',
+            help='list all available tags and inventory hosts')
+
+    parser.add_argument('command', nargs='?', help='command to execute')
 
     args = parser.parse_args()
 
-    if os.path.isfile(args.config_file) and os.access(args.config_file, os.R_OK):
+    try:
         with open(args.config_file,'r') as f:
             config = yaml.load(f)
-    else:
-        print('unable to open config file %s' % args.config_file)
+    except Exception as ex:
+        print('unable to open config file %s\n%s' % (args.config_file, ex))
         sys.exit(1)
+
+    tagfile = os.path.expanduser(config['tag_file'])
+
+    tagman = TagManager(tagfile)
+
+    if args.l:
+        all_tags = tagman.all_tags()
+        print('All Tags (%d):' % len(all_tags))
+        for tag in all_tags:
+            print('  %s' % tag)
+
+        all_hosts = tagman.all_hosts()
+        print('All Hosts (%d):' % len(all_hosts))
+        for host in all_hosts:
+            print('  %s' % host)
+
+        sys.exit(0)
 
     if not args.tags and not args.not_tags:
         print('you must specify at least one -nt or -t option')
         sys.exit(1)
 
-    tagfile = os.path.expanduser(config['tag_file'])
-
-    t = TagManager(tagfile)
-
-    nodes = [ node for node in t.get(tags=args.tags,exclude_tags=args.not_tags) ] 
+    nodes = tagman.get(tags=args.tags,exclude_tags=args.not_tags)
 
     if not nodes:
         print('no nodes found to execute against')

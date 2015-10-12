@@ -41,11 +41,14 @@ outdir: directory to log stdout (default: ~/.tagshell/logs/)
 
 ## Options
 ```bash
+tagshell <options> <cmd>
+
+optional arguments:
   -h, --help      show this help message and exit
   -v, --version   show program's version number and exit
-  -b              batch mode. supress asking for confirmation and immediately
-                  execute
+  -c CONFIG_FILE  path to tagshell config file
+  -b              batch mode. supress confirmation and immediately execute
   -t TAGS         tag to match. can be specified multiple times
   -nt NOT_TAGS    tag to NOT match. can be specified multiple times
-  -c CONFIG_FILE  tagshell config file
+  -l              list all available tags and inventory hosts
 ```

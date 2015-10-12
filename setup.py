@@ -2,7 +2,8 @@ import os
 import shutil
 from pwd import getpwnam
 from setuptools import setup, find_packages
-from tagshell import __version__
+
+exec(open('tagshell/version.py').read())
 
 requires = [ 'pyyaml', 'pssh' ]
 
@@ -34,7 +35,7 @@ if not os.path.isfile(tag_file):
     os.chown(config_dir,uid,gid)
 
 setup(name='tagshell',
-        version=__version__,
+        version=version,
         description='tagshell',
         author='Bradley Cicenas',
         author_email='bradley.cicenas@gmail.com',

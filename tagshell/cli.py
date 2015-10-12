@@ -1,13 +1,15 @@
-import sys,os,yaml
+import sys
+import os
+import yaml
 from argparse import ArgumentParser
-from . import __version__
-from core import TagShell, TagManager
+from tagshell.version import version
+from tagshell.core import TagShell, TagManager
 
 class TagShellCli(object):
     def __init__(self):
         description = 'parallel remote shell execution and inventory utility'
 
-        parser = ArgumentParser(version=__version__, description=description)
+        parser = ArgumentParser(version=version, description=description)
         parser.add_argument('-c',
                 dest='config_file',
                 help='path to tagshell config file',
